@@ -13,7 +13,7 @@ import java.util.Properties;
  * @author WuChao
  * @create 2021/6/19 17:08
  */
-public class CSVToKafka {
+public class KafkaProducerUtil {
     /**
      * 使用 Flink 向 Kafka中 传数据
      */
@@ -24,7 +24,7 @@ public class CSVToKafka {
         properties.setProperty("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         properties.setProperty("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
-        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
+        org.apache.kafka.clients.producer.KafkaProducer<String, String> producer = new org.apache.kafka.clients.producer.KafkaProducer<String, String>(properties);
         String topic = "hotitems";
         File file = new File("HotItemsAnalysis/src/main/resources/UserBehavior.csv");
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
