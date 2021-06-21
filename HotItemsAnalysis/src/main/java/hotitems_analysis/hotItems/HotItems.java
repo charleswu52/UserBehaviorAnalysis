@@ -40,8 +40,6 @@ public class HotItems {
         env.setParallelism(1);
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
-        // 从 文件 读取数据
-        // DataStream<String> inputStream = env.readTextFile("HotItemsAnalysis/src/main/resources/UserBehavior.csv");
         // 从 Kafka 读取数据
         Properties properties = new Properties();
         properties.setProperty("bootstrap.servers", "hadoop102:9092,hadoop103:9092,hadoop104:9092");
@@ -57,7 +55,12 @@ public class HotItems {
         // 转化为POJO类型 分配时间戳和watermark
         DataStream<UserBehavior> dataStream = inputStream.map(line -> {
             String[] fields = line.split(",");
-            return new UserBehavior(new Long(fields[0]), new Long(fields[1]), new Integer(fields[2]), fields[3], new Long(fields[4]));
+            return new UserBehavior(
+                    new Long(fields[0]),
+                    new Long(fields[1]),
+                    new Integer(fields[2]),
+                    fields[3],
+                    new Long(fields[4]));
             // 日志数据已经经过了ETL清洗，按照时间戳升序排序
         }).assignTimestampsAndWatermarks(new AscendingTimestampExtractor<UserBehavior>() {
             @Override
@@ -150,7 +153,7 @@ public class HotItems {
 
         @Override
         public void processElement(ItemViewCount value, Context ctx, Collector<String> out) throws Exception {
-            // 每来一条数据，存入List中，并注册定时器
+            // 每来一条数据，存入ListState中，并注册定时器
             itemViewCountListState.add(value);
             ctx.timerService().registerEventTimeTimer(value.getWindowEnd() + 1);
         }

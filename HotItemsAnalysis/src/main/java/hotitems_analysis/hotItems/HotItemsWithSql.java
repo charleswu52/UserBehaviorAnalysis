@@ -12,6 +12,8 @@ import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.apache.flink.table.planner.plan.logical.SlidingGroupWindow;
 import org.apache.flink.types.Row;
 
+import java.net.URL;
+
 /**
  * @author WuChao
  * @create 2021/6/20 15:19
@@ -28,7 +30,8 @@ public class HotItemsWithSql {
         env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
         // 从 文件 读取数据
-        DataStream<String> inputStream = env.readTextFile("HotItemsAnalysis/src/main/resources/UserBehavior.csv");
+        URL resource = HotItemsWithSql.class.getResource("/UserBehavior.csv");
+        DataStream<String> inputStream = env.readTextFile(resource.getPath());
 
         // 转化为POJO类型 分配时间戳和watermark
         DataStream<UserBehavior> dataStream = inputStream.map(line -> {
