@@ -1,4 +1,4 @@
-package market_analysis.ma;
+package market_analysis.func;
 
 /**
  * @author WuChao
